@@ -699,6 +699,8 @@ export default function App() {
   const getGuideStep = (): { message: string; action: string; tab?: string; onClick?: () => void } | null => {
     if (guideDismissedUntil === activeTab) return null;
     if (!user || loading) return null;
+    // In demo mode, always show guides (fresh experience for each session)
+    const isDemo = user?.demoMode;
     if (patients.length === 0) {
       if (activeTab === 'pacientes') return null; // already there
       return {
@@ -715,7 +717,8 @@ export default function App() {
         tab: 'agenda',
       };
     }
-    const recordOpened = user?.record_opened || hasMilestone('recordOpened');
+    // Force show record guide in demo mode
+    const recordOpened = isDemo ? false : (user?.record_opened || hasMilestone('recordOpened'));
     if (!recordOpened) {
       if (activeTab === 'prontuario') return null;
       return {
